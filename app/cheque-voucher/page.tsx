@@ -1,11 +1,12 @@
 "use client"
+
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Download, Upload, X } from 'lucide-react'
+import { Download, Upload, X } from "lucide-react"
 import domtoimage from "dom-to-image"
 import { useToast } from "@/hooks/use-toast" // Import useToast
 
@@ -22,12 +23,11 @@ const formatDate = (dateString: string) => {
 
 export default function ChequeVoucher() {
   const { toast } = useToast() // Initialize useToast
-
   const [formData, setFormData] = useState({
     paidTo: "",
     voucherNo: "", // Will be fetched from backend
     date: "",
-    logo: "/logo.png", // Use placeholder for logo
+    logo: "/logo.png", // Using placeholder.svg
     amount: "",
     purpose: "",
     checkNo: "",
@@ -111,9 +111,6 @@ export default function ChequeVoucher() {
     try {
       setIsSaving(true)
       const node = previewRef.current
-      // Get the current computed dimensions of the node
-      const currentWidth = node.offsetWidth
-      const currentHeight = node.offsetHeight
       // Wait for images (e.g., logos, signatures) to load
       const images = Array.from(node.querySelectorAll("img"))
       await Promise.all(
@@ -144,7 +141,7 @@ export default function ChequeVoucher() {
       const link = document.createElement("a")
       link.download = `cheque-voucher-${formData.voucherNo || "untitled"}.png`
       link.href = dataUrl
-    link.click()
+      link.click()
     } catch (error) {
       console.error("Export failed:", error)
       toast({
@@ -270,12 +267,11 @@ export default function ChequeVoucher() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       <div className="flex flex-col space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Cheque Voucher</h1>
         <p className="text-slate-500">Create and manage cheque vouchers with live preview.</p>
       </div>
-      {/* Removed the custom message display div */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Form Section */}
         <Card className="h-fit lg:col-span-2">
@@ -388,7 +384,9 @@ export default function ChequeVoucher() {
                   <Label>Signature</Label>
                   {receivedBy.signatureUrl ? (
                     <div className="space-y-2">
-                      <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 h-24 flex items-center justify-center">
+                      <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center">
+                        {" "}
+                        {/* Removed fixed h-24 */}
                         <img
                           src={receivedBy.signatureUrl || "/placeholder.svg"}
                           alt="Signature"
@@ -406,7 +404,9 @@ export default function ChequeVoucher() {
                       </div>
                     </div>
                   ) : (
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 h-24 text-center flex flex-col items-center justify-center">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center flex flex-col items-center justify-center">
+                      {" "}
+                      {/* Removed fixed h-24 */}
                       <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                       <Label htmlFor="receivedSignature" className="cursor-pointer text-sm text-gray-600">
                         Click to upload signature
@@ -447,7 +447,9 @@ export default function ChequeVoucher() {
                   <Label>Signature</Label>
                   {approvedBy.signatureUrl ? (
                     <div className="space-y-2">
-                      <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 h-24 flex items-center justify-center">
+                      <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center">
+                        {" "}
+                        {/* Removed fixed h-24 */}
                         <img
                           src={approvedBy.signatureUrl || "/placeholder.svg"}
                           alt="Signature"
@@ -465,7 +467,9 @@ export default function ChequeVoucher() {
                       </div>
                     </div>
                   ) : (
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 h-24 text-center flex flex-col items-center justify-center">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center flex flex-col items-center justify-center">
+                      {" "}
+                      {/* Removed fixed h-24 */}
                       <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                       <Label htmlFor="approvedSignature" className="cursor-pointer text-sm text-gray-600">
                         Click to upload signature
@@ -502,11 +506,11 @@ export default function ChequeVoucher() {
             </Button>
           </CardContent>
         </Card>
-        {/* Preview Section - Reverted to original structure for compactness */}
+        {/* Preview Section */}
         <Card className="lg:col-span-3 border rounded-lg bg-white shadow-sm h-fit">
           <div
             ref={previewRef}
-            className="bg-white p-4 border-2 border-gray-300 text-black w-full" // Changed p-6 to p-4
+            className="bg-white p-4 border-2 border-gray-300 text-black w-full"
             style={{ fontFamily: "Arial, sans-serif" }}
           >
             <div className="flex items-center mb-4">
@@ -515,7 +519,7 @@ export default function ChequeVoucher() {
                 <img
                   src={formData.logo || "/placeholder.svg"}
                   alt="Company Logo"
-                  className="max-h-14 max-w-[150px]" // Adjusted max-h
+                  className="max-h-14 max-w-[150px]"
                   crossOrigin="anonymous"
                 />
               </div>
@@ -525,16 +529,18 @@ export default function ChequeVoucher() {
               </div>
             </div>
             {/* Header Info */}
-            <div className="grid grid-cols-2 gap-x-2 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 mb-4">
+              {" "}
+              {/* Adjusted to sm:grid-cols-2 for better mobile stacking */}
               <div className="flex items-center mt-2">
-                {" "}
-                {/* Reduced top margin here */}
                 <span className="font-semibold">Paid to:</span>
                 <span className="ml-2 border-b border-black flex-grow min-h-[1.5rem] flex items-end">
                   <span className="pb-1">{formData.paidTo}</span>
                 </span>
               </div>
-              <div className="flex flex-col items-end space-y-1">
+              <div className="flex flex-col items-end space-y-1 mt-4 sm:mt-2">
+                {" "}
+                {/* Adjusted margin for sm screens */}
                 <div className="flex items-center w-full justify-end">
                   <span className="font-semibold flex-shrink-0 pr-2">Voucher No:</span>
                   <span className="border-b border-black inline-flex items-end min-w-[130px] text-right min-h-[1.5rem]">
@@ -551,11 +557,9 @@ export default function ChequeVoucher() {
             </div>
             {/* Table with all details inside */}
             <div className="grid grid-rows-[auto_1fr] border-2 border-black mb-2">
-              {" "}
-              {/* Reduced mb-4 to mb-2 */}
               {/* Header Row - Fixed height and proper vertical centering */}
               <div
-                className="grid grid-cols-[65%_35%] border-b border-black bg-gray-100 relative" // Changed to 65%_35%
+                className="grid grid-cols-[65%_35%] border-b border-black bg-gray-100 relative"
                 style={{ height: "50px" }}
               >
                 {/* PARTICULAR Column */}
@@ -569,43 +573,61 @@ export default function ChequeVoucher() {
               </div>
               {/* Main Content Area */}
               <div className="grid grid-cols-[65%_35%] relative">
-                {" "}
-                {/* Changed to 65%_35% */}
                 {/* Vertical line between Particular and Amount */}
-                <div className="absolute inset-y-0 left-[65%] w-px bg-black"></div> {/* Changed to left-[65%] */}
+                <div className="absolute inset-y-0 left-[65%] w-px bg-black"></div>
                 {/* Left Column: Particular and Bank Details */}
                 <div className="px-2 py-2 text-sm flex flex-col">
                   <div className="space-y-1 mt-1">
-                    <div className="flex items-center">
+                    <div className="flex items-center flex-wrap">
+                      {" "}
+                      {/* Added flex-wrap for small screens */}
                       <span className="font-semibold">Purpose:</span>
-                      <span className="ml-1 inline-flex items-end w-40 min-h-[1.2rem]">
+                      <span className="ml-1 inline-flex items-end flex-grow min-h-[1.2rem]">
+                        {" "}
+                        {/* Changed w-40 to flex-grow */}
                         <span className="pb-px">{formData.purpose}</span>
                       </span>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex items-center flex-wrap">
+                      {" "}
+                      {/* Added flex-wrap for small screens */}
                       <span className="font-semibold">Check No:</span>
-                      <span className="ml-1 inline-flex items-end w-40 min-h-[1.2rem]">
+                      <span className="ml-1 inline-flex items-end flex-grow min-h-[1.2rem]">
+                        {" "}
+                        {/* Changed w-40 to flex-grow */}
                         <span className="pb-px">{formData.checkNo}</span>
                       </span>
                     </div>
                     <div>
                       <span className="font-semibold">Bank Details:</span>
                       <div className="pl-4 space-y-1">
-                        <div className="flex items-center">
+                        <div className="flex items-center flex-wrap">
+                          {" "}
+                          {/* Added flex-wrap for small screens */}
                           <span className="font-semibold">Account Name:</span>
-                          <span className="ml-1 border-b border-black inline-flex items-end w-40 min-h-[1.2rem]">
+                          <span className="ml-1 border-b border-black inline-flex items-end flex-grow min-h-[1.2rem]">
+                            {" "}
+                            {/* Changed w-40 to flex-grow */}
                             <span className="pb-px">{formData.accountName}</span>
                           </span>
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex items-center flex-wrap">
+                          {" "}
+                          {/* Added flex-wrap for small screens */}
                           <span className="font-semibold">Account Number:</span>
-                          <span className="ml-1 border-b border-black inline-flex items-end w-40 min-h-[1.2rem]">
+                          <span className="ml-1 border-b border-black inline-flex items-end flex-grow min-h-[1.2rem]">
+                            {" "}
+                            {/* Changed w-40 to flex-grow */}
                             <span className="pb-px">{formData.accountNumber}</span>
                           </span>
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex items-center flex-wrap">
+                          {" "}
+                          {/* Added flex-wrap for small screens */}
                           <span className="font-semibold">Amount:</span>
-                          <span className="ml-1 border-b border-black inline-flex items-end w-40 min-h-[1.2rem]">
+                          <span className="ml-1 border-b border-black inline-flex items-end flex-grow min-h-[1.2rem]">
+                            {" "}
+                            {/* Changed w-40 to flex-grow */}
                             <span className="pb-px">
                               {formData.amount ? `₱${Number.parseFloat(formData.amount).toFixed(2)}` : <>&nbsp;</>}
                             </span>
@@ -636,24 +658,16 @@ export default function ChequeVoucher() {
               </div>
             </div>
             {/* Signatures */}
-            <div className="flex justify-between mt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 mt-2">
               {" "}
-              {/* Reduced mt-4 to mt-2, pt-2 added */}
-              <div className="text-start flex-1 mr-2">
-                {" "}
-                {/* Reduced mb-4 to mb-2 */}
+              {/* Changed to responsive grid */}
+              <div className="text-start">
                 <div className="mb-1 font-semibold">Received by:</div>
                 <div className="mb-0">
-                  {" "}
-                  {/* Reduced mb-2 to mb-1 */}
-                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2 mt-10">
-                    <div className="flex flex-col items-center text-center relative min-h-[40px]">
-                      {" "}
-                      {/* Reduced min-h from 50px to 45px */}
+                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2">
+                    <div className="flex flex-col items-center text-center relative min-h-[40px] mt-4">
                       {receivedBy.signatureUrl && (
-                        <div className="absolute bottom-[calc(100%-8px)] left-1/2 -translate-x-1/2">
-                          {" "}
-                          {/* Adjusted bottom */}
+                        <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2">
                           <img
                             src={receivedBy.signatureUrl || "/placeholder.svg"}
                             alt="Signature"
@@ -662,19 +676,13 @@ export default function ChequeVoucher() {
                           />
                         </div>
                       )}
-                      <div className="min-h-[18px] flex items-end justify-center border-b-[1px] border-b-black w-full">
-                        {" "}
-                        {/* Reduced min-h from 24px to 20px */}
+                      <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
                         <span className="pb-1">{receivedBy.name}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">PRINTED NAME AND SIGNATURE</div>
                     </div>
                     <div className="flex flex-col items-center text-center w-[100px] min-h-[40px]">
-                      {" "}
-                      {/* Reduced min-h from 50px to 45px */}
-                      <div className="min-h-[18px] flex items-end justify-center border-b-[1px] border-b-black w-full">
-                        {" "}
-                        {/* Reduced min-h from 24px to 20px */}
+                      <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
                         <span className="pb-1">{formatDate(receivedBy.date)}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">DATE</div>
@@ -682,20 +690,15 @@ export default function ChequeVoucher() {
                   </div>
                 </div>
               </div>
-              <div className="text-start flex-1 ml-2">
+              <div className="text-start mt-4 md:mt-0">
                 {" "}
-                <div className="mb-1 font-semibold">Approved by:</div> {/* Reduced mb-4 to mb-2 */}
+                {/* Added top margin for mobile, removed for md+ */}
+                <div className="mb-1 font-semibold">Approved by:</div>
                 <div className="mb-0">
-                  {" "}
-                  {/* Reduced mb-2 to mb-1 */}
-                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2 mt-10">
-                    <div className="flex flex-col items-center text-center relative min-h-[40px]">
-                      {" "}
-                      {/* Reduced min-h from 50px to 45px */}
+                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2">
+                    <div className="flex flex-col items-center text-center relative min-h-[40px] mt-4">
                       {approvedBy.signatureUrl && (
-                        <div className="absolute bottom-[calc(100%-8px)] left-1/2 -translate-x-1/2">
-                          {" "}
-                          {/* Adjusted bottom */}
+                        <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2">
                           <img
                             src={approvedBy.signatureUrl || "/placeholder.svg"}
                             alt="Signature"
@@ -704,19 +707,13 @@ export default function ChequeVoucher() {
                           />
                         </div>
                       )}
-                      <div className="min-h-[18px] flex items-end justify-center border-b-[1px] border-b-black w-full">
-                        {" "}
-                        {/* Reduced min-h from 24px to 20px */}
+                      <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
                         <span className="pb-1">{approvedBy.name}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">PRINTED NAME AND SIGNATURE</div>
                     </div>
                     <div className="flex flex-col items-center text-center w-[100px] min-h-[40px]">
-                      {" "}
-                      {/* Reduced min-h from 50px to 45px */}
-                      <div className="min-h-[18px] flex items-end justify-center border-b-[1px] border-b-black w-full">
-                        {" "}
-                        {/* Reduced min-h from 24px to 20px */}
+                      <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
                         <span className="pb-1">{formatDate(approvedBy.date)}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">DATE</div>
