@@ -1,4 +1,5 @@
 "use client"
+
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -29,15 +30,13 @@ const formatDate = (dateString: string) => {
 
 export default function CashVoucher() {
   const { toast } = useToast() // Initialize useToast
-
   const currentYearTwoDigits = new Date().getFullYear().toString().slice(-2)
   const initialVoucherNo = `CSH-${currentYearTwoDigits}-000001`
-
   const [formData, setFormData] = useState({
     paidTo: "",
     voucherNo: initialVoucherNo,
     date: "",
-    logo: "/logo.png",
+    logo: "/logo.png", // Using placeholder.svg
   })
   const [particulars, setParticulars] = useState<Particular[]>([{ id: "1", description: "", amount: "" }])
   const [receivedBy, setReceivedBy] = useState({
@@ -143,9 +142,6 @@ export default function CashVoucher() {
     try {
       setIsSaving(true)
       const node = previewRef.current
-      // Get the current computed dimensions of the node
-      const currentWidth = node.offsetWidth
-      const currentHeight = node.offsetHeight
       // Wait for images (e.g., logos, signatures) to load
       const images = Array.from(node.querySelectorAll("img"))
       await Promise.all(
@@ -156,7 +152,7 @@ export default function CashVoucher() {
           })
         }),
       )
-      // Generate PNG from node, using the current dimensions
+      // Generate PNG from node, using a fixed width for export
       const originalWidth = node.style.width
       const originalMaxWidth = node.style.maxWidth
       node.style.width = "1000px" // Set your desired export width here
@@ -253,12 +249,11 @@ export default function CashVoucher() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       <div className="flex flex-col space-y-2">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">Cash Voucher</h1>
         <p className="text-slate-500">Create and manage cash vouchers with live preview.</p>
       </div>
-      {/* Removed the custom message display div */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Form Section */}
         <Card className="h-fit lg:col-span-2">
@@ -473,17 +468,16 @@ export default function CashVoucher() {
                 </>
               )}
             </Button>
-            {/* Removed the custom saveMessage display div */}
             <Button onClick={exportAsImage} className="w-full" size="lg">
               <Download className="w-4 h-4 mr-2" /> Export as Image
             </Button>
           </CardContent>
         </Card>
-        {/* Preview Section - Reverted to original structure for compactness */}
+        {/* Preview Section */}
         <Card className="lg:col-span-3 border rounded-lg bg-white shadow-sm h-fit">
           <div
             ref={previewRef}
-            className="bg-white p-6 border-2 border-gray-300 text-black w-full" // Removed aspect-[3/1]
+            className="bg-white p-6 border-2 border-gray-300 text-black w-full"
             style={{ fontFamily: "Arial, sans-serif" }}
           >
             <div className="flex items-center mb-4">
@@ -492,7 +486,7 @@ export default function CashVoucher() {
                 <img
                   src={formData.logo || "/placeholder.svg"}
                   alt="Company Logo"
-                  className="max-h-14 max-w-[150px]" // Adjusted max-h
+                  className="max-h-14 max-w-[150px]"
                   crossOrigin="anonymous"
                 />
               </div>
@@ -502,14 +496,18 @@ export default function CashVoucher() {
               </div>
             </div>
             {/* Header Info */}
-            <div className="grid grid-cols-2 gap-x-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 mb-4">
+              {" "}
+              {/* Adjusted to sm:grid-cols-2 for better mobile stacking */}
               <div className="flex items-center mt-8">
                 <span className="font-semibold">Paid to:</span>
                 <span className="ml-2 border-b border-black flex-grow min-h-[1.5rem] flex items-end">
                   <span className="pb-1">{formData.paidTo}</span>
                 </span>
               </div>
-              <div className="flex flex-col items-end space-y-1">
+              <div className="flex flex-col items-end space-y-1 mt-4 sm:mt-8">
+                {" "}
+                {/* Adjusted margin for sm screens */}
                 <div className="flex items-center w-full justify-end">
                   <span className="font-semibold flex-shrink-0 pr-2">Voucher No:</span>
                   <span className="border-b border-black inline-flex items-end min-w-[130px] text-right min-h-[1.5rem]">
@@ -575,14 +573,16 @@ export default function CashVoucher() {
               </div>
             </div>
             {/* Signatures */}
-            <div className="flex justify-between mt-2">
-              <div className="text-start flex-1 mr-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 mt-2">
+              {" "}
+              {/* Changed to responsive grid */}
+              <div className="text-start">
                 <div className="mb-1 font-semibold">Received by:</div>
                 <div className="mb-0">
                   <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2">
-                    <div className="flex flex-col items-center text-center relative min-h-[40px] mt-8">
+                    <div className="flex flex-col items-center text-center relative min-h-[40px]">
                       {receivedBy.signatureUrl && (
-                        <div className="absolute bottom-[calc(100%-8px)] left-1/2 -translate-x-1/2">
+                        <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2">
                           <img
                             src={receivedBy.signatureUrl || "/placeholder.svg"}
                             alt="Signature"
@@ -591,13 +591,13 @@ export default function CashVoucher() {
                           />
                         </div>
                       )}
-                      <div className="min-h-[18px] flex items-end justify-center border-b-[1px] border-b-black w-full">
+                      <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
                         <span className="pb-1">{receivedBy.name}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">PRINTED NAME AND SIGNATURE</div>
                     </div>
                     <div className="flex flex-col items-center text-center w-[100px] min-h-[40px]">
-                      <div className="min-h-[18px] flex items-end justify-center border-b-[1px] border-b-black w-full">
+                      <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
                         <span className="pb-1">{formatDate(receivedBy.date)}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">DATE</div>
@@ -605,13 +605,15 @@ export default function CashVoucher() {
                   </div>
                 </div>
               </div>
-              <div className="text-start flex-1 ml-8">
+              <div className="text-start mt-4 md:mt-0">
+                {" "}
+                {/* Added top margin for mobile, removed for md+ */}
                 <div className="mb-1 font-semibold">Approved by:</div>
                 <div className="mb-0">
                   <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2">
-                    <div className="flex flex-col items-center text-center relative min-h-[40px] mt-10">
+                    <div className="flex flex-col items-center text-center relative min-h-[40px]">
                       {approvedBy.signatureUrl && (
-                        <div className="absolute bottom-[calc(100%-8px)] left-1/2 -translate-x-1/2">
+                        <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2">
                           <img
                             src={approvedBy.signatureUrl || "/placeholder.svg"}
                             alt="Signature"
@@ -620,13 +622,13 @@ export default function CashVoucher() {
                           />
                         </div>
                       )}
-                      <div className="min-h-[18px] flex items-end justify-center border-b-[1px] border-b-black w-full">
+                      <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
                         <span className="pb-1">{approvedBy.name}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">PRINTED NAME AND SIGNATURE</div>
                     </div>
                     <div className="flex flex-col items-center text-center w-[100px] min-h-[40px]">
-                      <div className="min-h-[18px] flex items-end justify-center border-b-[1px] border-b-black w-full">
+                      <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
                         <span className="pb-1">{formatDate(approvedBy.date)}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">DATE</div>
