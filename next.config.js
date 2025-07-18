@@ -14,6 +14,16 @@ const nextConfig = {
         port: '8000',
         pathname: '/api/signatures/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'infinitech-api1.site',
+        pathname: '/storage/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'infinitech-api1.site',
+        pathname: '/api/signatures/**',
+      },
     ],
   },
 };
