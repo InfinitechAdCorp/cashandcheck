@@ -53,12 +53,12 @@ export default function ChequeVoucherPage() {
       const data = await response.json()
       console.log("Full API Response Object (from fetchVouchers):", data) // This will show the exact structure
       // Adjusting based on the screenshot: API returns a direct array, not { data: [...] }
-      const fetchedVouchers = Array.isArray(data) ? data : []
+      const fetchedVouchers = data.data || []
       setVouchers(fetchedVouchers)
-      setTotalItems(fetchedVouchers.length) // Total items is the length of the fetched array
-      setPageCount(Math.ceil(fetchedVouchers.length / perPage)) // Calculate page count based on fetched data
-      setCurrentPage(1) // Reset to first page as we're getting a full array for the current "view"
-      setPerPage(perPage) // Keep current perPage setting
+      setTotalItems(data.total)
+      setPageCount(data.last_page)
+      setCurrentPage(data.current_page)
+      setPerPage(data.per_page)
     } catch (error: any) {
       console.error("Error fetching cheque vouchers:", error)
       toast({
