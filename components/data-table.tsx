@@ -54,15 +54,14 @@ export function DataTable<TData extends Identifiable>({
       {/* Table Container - This div will handle horizontal scrolling */}
       <div className="rounded-md border bg-white shadow-sm overflow-x-auto">
         <Table className="w-full">
-          {" "}
-          {/* Ensure this is w-full, not min-w-full */}
           <TableHeader>
             <TableRow className="bg-gray-50/50">
               {columns.map((column, index) => (
                 <TableHead
                   key={index}
+                  // Removed whitespace-nowrap from here to allow headers to wrap
                   // Apply text-right conditionally for 'actions' column, otherwise keep text-left
-                  className={`font-semibold text-gray-900 whitespace-nowrap px-4 py-3 ${
+                  className={`font-semibold text-gray-900 px-4 py-3 ${
                     column.accessorKey === "actions" ? "text-right" : "text-left"
                   }`}
                 >

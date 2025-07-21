@@ -48,15 +48,13 @@ export default function CashVoucherPage() {
       }
       const data = await response.json()
       console.log("Full API Response Object (from fetchVouchers):", data) // This will show the exact structure
-
       // Adjusting based on the screenshot: API returns a direct array, not { data: [...] }
-      const fetchedVouchers = Array.isArray(data) ? data : []
-
+      const fetchedVouchers = data.data || [] // Access the 'data' property of the paginated response
       setVouchers(fetchedVouchers)
-      setTotalItems(fetchedVouchers.length) // Total items is the length of the fetched array
-      setPageCount(Math.ceil(fetchedVouchers.length / perPage)) // Calculate page count based on fetched data
-      setCurrentPage(1) // Reset to first page as we're getting a full array for the current "view"
-      setPerPage(perPage) // Keep current perPage setting
+      setTotalItems(data.total) // Use total from Laravel response
+      setPageCount(data.last_page) // Use last_page from Laravel response
+      setCurrentPage(data.current_page) // Use current_page from Laravel response
+      setPerPage(data.per_page) // Use per_page from Laravel response
     } catch (error: any) {
       console.error("Error fetching cash vouchers:", error)
       toast({
@@ -91,7 +89,6 @@ export default function CashVoucherPage() {
     if (!window.confirm("Are you sure you want to cancel this voucher? This will update its status to 'cancelled'.")) {
       return
     }
-
     try {
       const response = await fetch(`/api/cash-vouchers/${id}`, {
         method: "PUT",
@@ -100,12 +97,10 @@ export default function CashVoucherPage() {
         },
         body: JSON.stringify({ status: "cancelled" }),
       })
-
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.message || "Failed to cancel cash voucher")
       }
-
       toast({
         title: "Success",
         description: "Cash voucher status updated to 'cancelled'.",
@@ -130,9 +125,8 @@ export default function CashVoucherPage() {
 
   const handleDeleteConfirm = async (otp: string) => {
     if (!deleteModal.voucher) return
-
     try {
-      const response = await fetch("/api/verify-otp-delete", {
+      const response = await fetch("/api/send-otp/verify-otp-delete", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -140,15 +134,13 @@ export default function CashVoucherPage() {
         body: JSON.stringify({
           otp,
           email: receiverEmail,
-          itemType: "cash-voucher",
+          itemType: "cash-voucher", // This tells the API which type of voucher to delete
           itemId: deleteModal.voucher.id,
         }),
       })
-
       if (!response.ok) {
         let errorData: any
         const contentType = response.headers.get("content-type")
-
         if (contentType && contentType.includes("application/json")) {
           errorData = await response.json()
         } else {
@@ -160,13 +152,12 @@ export default function CashVoucherPage() {
         }
         throw new Error(errorData.message || "An unknown error occurred during deletion.")
       }
-
       toast({
         title: "Success",
         description: "Cash voucher deleted successfully.",
       })
-
       fetchVouchers()
+      closeDeleteModal() // Close modal on success
     } catch (error: any) {
       console.error("Error during delete confirmation:", error)
       toast({
@@ -264,7 +255,6 @@ export default function CashVoucherPage() {
         onPerPageChange={setPerPage}
         loading={isLoading}
       />
-
       <OTPDeleteModal
         isOpen={deleteModal.isOpen}
         onClose={closeDeleteModal}

@@ -52,10 +52,8 @@ export default function ChequeVoucherPage() {
       }
       const data = await response.json()
       console.log("Full API Response Object (from fetchVouchers):", data) // This will show the exact structure
-
       // Adjusting based on the screenshot: API returns a direct array, not { data: [...] }
       const fetchedVouchers = Array.isArray(data) ? data : []
-
       setVouchers(fetchedVouchers)
       setTotalItems(fetchedVouchers.length) // Total items is the length of the fetched array
       setPageCount(Math.ceil(fetchedVouchers.length / perPage)) // Calculate page count based on fetched data
@@ -95,7 +93,6 @@ export default function ChequeVoucherPage() {
     if (!window.confirm("Are you sure you want to cancel this voucher? This will update its status to 'cancelled'.")) {
       return
     }
-
     const voucherToUpdate = vouchers.find((v) => v.id === id)
     if (!voucherToUpdate) {
       toast({
@@ -105,7 +102,6 @@ export default function ChequeVoucherPage() {
       })
       return
     }
-
     try {
       const updatedVoucher = { ...voucherToUpdate, status: "cancelled" }
       const response = await fetch(`/api/cheque-vouchers/${id}`, {
@@ -115,12 +111,10 @@ export default function ChequeVoucherPage() {
         },
         body: JSON.stringify(updatedVoucher),
       })
-
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.message || "Failed to cancel cheque voucher")
       }
-
       toast({
         title: "Success",
         description: "Cheque voucher status updated to 'cancelled'.",
@@ -145,9 +139,8 @@ export default function ChequeVoucherPage() {
 
   const handleDeleteConfirm = async (otp: string) => {
     if (!deleteModal.voucher) return
-
     try {
-      const response = await fetch("/api/verify-otp-delete", {
+      const response = await fetch("/api/send-otp/verify-otp-delete", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -155,15 +148,13 @@ export default function ChequeVoucherPage() {
         body: JSON.stringify({
           otp,
           email: receiverEmail,
-          itemType: "cheque-voucher",
+          itemType: "cheque-voucher", // This tells the API which type of voucher to delete
           itemId: deleteModal.voucher.id,
         }),
       })
-
       if (!response.ok) {
         let errorData: any
         const contentType = response.headers.get("content-type")
-
         if (contentType && contentType.includes("application/json")) {
           errorData = await response.json()
         } else {
@@ -175,13 +166,12 @@ export default function ChequeVoucherPage() {
         }
         throw new Error(errorData.message || "An unknown error occurred during deletion.")
       }
-
       toast({
         title: "Success",
         description: "Cheque voucher deleted successfully.",
       })
-
       fetchVouchers()
+      closeDeleteModal() // Close modal on success
     } catch (error: any) {
       console.error("Error during delete confirmation:", error)
       toast({
@@ -283,7 +273,6 @@ export default function ChequeVoucherPage() {
         onPerPageChange={setPerPage}
         loading={isLoading}
       />
-
       <OTPDeleteModal
         isOpen={deleteModal.isOpen}
         onClose={closeDeleteModal}
