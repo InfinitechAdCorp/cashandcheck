@@ -664,7 +664,7 @@ export default function ChequeVoucher() {
               <div className="text-start">
                 <div className="mb-1 font-semibold">Received by:</div>
                 <div className="mb-0">
-                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2">
+                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2 mt-10">
                     <div className="flex flex-col items-center text-center relative min-h-[40px] mt-4">
                       {receivedBy.signatureUrl && (
                         <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2">
@@ -695,7 +695,7 @@ export default function ChequeVoucher() {
                 {/* Added top margin for mobile, removed for md+ */}
                 <div className="mb-1 font-semibold">Approved by:</div>
                 <div className="mb-0">
-                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2">
+                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2 mt-10">
                     <div className="flex flex-col items-center text-center relative min-h-[40px] mt-4">
                       {approvedBy.signatureUrl && (
                         <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2">

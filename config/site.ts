@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Acme Corp",
+  name: "ABIC Realty Accounting System",
   description: "Beautifully designed components built with Radix UI and Tailwind CSS.",
   mainNav: [
     {

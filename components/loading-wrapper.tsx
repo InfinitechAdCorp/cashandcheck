@@ -2,8 +2,9 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import ABICLoader from "./abic-loader"
+import { UserContext } from "@/lib/UserContext"
 
 interface LoadingWrapperProps {
   children: React.ReactNode
@@ -11,17 +12,19 @@ interface LoadingWrapperProps {
 }
 
 export default function LoadingWrapper({ children, loadingTime = 3000 }: LoadingWrapperProps) {
-  const [isLoading, setIsLoading] = useState(true)
+  const [user] = useContext(UserContext) || [null]
+  const [minLoadingTimeElapsed, setMinLoadingTimeElapsed] = useState(false)
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsLoading(false)
+      setMinLoadingTimeElapsed(true)
     }, loadingTime)
-
     return () => clearTimeout(timer)
   }, [loadingTime])
 
-  if (isLoading) {
+  const showLoader = user?.loading || !minLoadingTimeElapsed
+
+  if (showLoader) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-pink-50">
         <ABICLoader size="lg" text="Loading ABIC Accounting System..." />

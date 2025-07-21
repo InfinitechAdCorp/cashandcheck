@@ -7,9 +7,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Plus, Download, Trash2, Upload, X, Save } from 'lucide-react'
+import { Plus, Download, Trash2, Upload, X, Save } from "lucide-react"
 import domtoimage from "dom-to-image"
-import { useToast } from "@/hooks/use-toast" // Import useToast
+import { useToast } from "@/hooks/use-toast"
 
 interface Particular {
   id: string
@@ -17,21 +17,38 @@ interface Particular {
   amount: string
 }
 
-// Helper function to format date
-const formatDate = (dateString: string) => {
+// Helper function to format date consistently for preview to avoid hydration issues
+const formatDateForPreview = (dateString: string) => {
   if (!dateString) return ""
   const date = new Date(dateString)
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
+  if (isNaN(date.getTime())) return "" // Handle invalid date strings
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+  const day = date.getDate()
+  const month = months[date.getMonth()]
+  const year = date.getFullYear()
+
+  return `${month} ${day}, ${year}`
 }
 
 export default function CashVoucher() {
   const { toast } = useToast() // Initialize useToast
   const currentYearTwoDigits = new Date().getFullYear().toString().slice(-2)
   const initialVoucherNo = `CSH-${currentYearTwoDigits}-000001`
+
   const [formData, setFormData] = useState({
     paidTo: "",
     voucherNo: initialVoucherNo,
@@ -85,7 +102,7 @@ export default function CashVoucher() {
       }
     }
     fetchLatestVoucherNo()
-  }, [])
+  }, []) // The useEffect hook is used to perform side effects like data fetching [^2].
 
   const addParticular = () => {
     const newParticular = {
@@ -517,7 +534,7 @@ export default function CashVoucher() {
                 <div className="flex items-center w-full justify-end">
                   <span className="font-semibold flex-shrink-0 pr-2">Date:</span>
                   <span className="border-b border-black inline-flex items-end min-w-[130px] text-right min-h-[1.5rem]">
-                    <span className="pb-1">{formatDate(formData.date)}</span>
+                    <span className="pb-1">{formatDateForPreview(formData.date)}</span>
                   </span>
                 </div>
               </div>
@@ -579,7 +596,7 @@ export default function CashVoucher() {
               <div className="text-start">
                 <div className="mb-1 font-semibold">Received by:</div>
                 <div className="mb-0">
-                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2">
+                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2 mt-12">
                     <div className="flex flex-col items-center text-center relative min-h-[40px]">
                       {receivedBy.signatureUrl && (
                         <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2">
@@ -598,7 +615,7 @@ export default function CashVoucher() {
                     </div>
                     <div className="flex flex-col items-center text-center w-[100px] min-h-[40px]">
                       <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
-                        <span className="pb-1">{formatDate(receivedBy.date)}</span>
+                        <span className="pb-1">{formatDateForPreview(receivedBy.date)}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">DATE</div>
                     </div>
@@ -610,7 +627,7 @@ export default function CashVoucher() {
                 {/* Added top margin for mobile, removed for md+ */}
                 <div className="mb-1 font-semibold">Approved by:</div>
                 <div className="mb-0">
-                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2">
+                  <div className="grid grid-cols-[1fr_auto] gap-x-4 items-end mb-2 mt-12">
                     <div className="flex flex-col items-center text-center relative min-h-[40px]">
                       {approvedBy.signatureUrl && (
                         <div className="absolute bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2">
@@ -629,7 +646,7 @@ export default function CashVoucher() {
                     </div>
                     <div className="flex flex-col items-center text-center w-[100px] min-h-[40px]">
                       <div className="min-h-[24px] flex items-end justify-center border-b-[1px] border-b-black w-full">
-                        <span className="pb-1">{formatDate(approvedBy.date)}</span>
+                        <span className="pb-1">{formatDateForPreview(approvedBy.date)}</span>
                       </div>
                       <div className="pt-1 text-xs whitespace-nowrap">DATE</div>
                     </div>

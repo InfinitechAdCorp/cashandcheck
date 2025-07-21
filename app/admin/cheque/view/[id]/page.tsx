@@ -34,6 +34,9 @@ export default function ChequeVoucherViewPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Get the Laravel API URL from environment variables
+  const LARAVEL_API_URL = process.env.NEXT_PUBLIC_API_URL
+
   useEffect(() => {
     if (id) {
       const fetchVoucher = async () => {
@@ -57,6 +60,7 @@ export default function ChequeVoucherViewPage() {
           setIsLoading(false)
         }
       }
+
       fetchVoucher()
     }
   }, [id, toast])
@@ -81,30 +85,53 @@ export default function ChequeVoucherViewPage() {
   const wholeAmount = amountParts[0]
   const decimalAmount = amountParts[1]
 
+  // Helper function to get full signature URL
+  const getSignatureUrl = (relativePath: string | null) => {
+    if (!relativePath) {
+      return "/placeholder.svg" // Fallback to placeholder if no path
+    }
+
+    // If the path already starts with http/https, return as is (for backward compatibility)
+    if (relativePath.startsWith("http://") || relativePath.startsWith("https://")) {
+      return relativePath
+    }
+
+    // If it's a relative path starting with /signatures/, construct the full URL
+    if (relativePath.startsWith("/signatures/")) {
+      if (!LARAVEL_API_URL) {
+        return "/placeholder.svg" // Fallback if no API URL configured
+      }
+      // Remove trailing slash from API URL if present
+      const baseUrl = LARAVEL_API_URL.endsWith("/") ? LARAVEL_API_URL.slice(0, -1) : LARAVEL_API_URL
+      return `${baseUrl}${relativePath}`
+    }
+
+    // For any other format, try to construct the URL
+    if (LARAVEL_API_URL) {
+      const baseUrl = LARAVEL_API_URL.endsWith("/") ? LARAVEL_API_URL.slice(0, -1) : LARAVEL_API_URL
+      return `${baseUrl}/${relativePath}`
+    }
+
+    return "/placeholder.svg"
+  }
+
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-end items-center mb-4">
         <Button onClick={() => router.back()}>Back to List</Button>
       </div>
-
       <div className="border border-gray-300 p-6 rounded-lg shadow-sm bg-white max-w-3xl mx-auto">
         {/* Header Section */}
         <div className="flex justify-between items-start mb-6">
           <div className="flex items-center">
-            <Image
-              src="/logo.png"
-              alt="ABIC Realty Logo"
-              width={60}
-              height={60}
-              className="mr-2"
-            />
+            <Image src="/logo.png" alt="ABIC Realty Logo" width={60} height={60} className="mr-2" />
             <div className="text-sm">
               <p className="font-bold">ABIC Realty</p>
               <p>&amp; Consultancy Corporation</p>
             </div>
           </div>
           <div className="flex-grow text-center">
-            <h1 className="text-xl font-bold underline">CASH VOUCHER</h1>
+            <h1 className="text-xl font-bold underline">CHEQUE VOUCHER</h1>
           </div>
           <div className="text-right text-sm">
             <p className="mb-1">
@@ -166,11 +193,12 @@ export default function ChequeVoucherViewPage() {
             <div className="flex flex-col items-center mb-4">
               {voucher.received_by_signature_url ? (
                 <Image
-                  src={voucher.received_by_signature_url || "/placeholder.svg"}
+                  src={getSignatureUrl(voucher.received_by_signature_url) || "/placeholder.svg"}
                   alt="Received By Signature"
                   width={150}
                   height={80}
                   className="border border-gray-300 mb-2"
+                  crossOrigin="anonymous"
                 />
               ) : (
                 <div className="w-[150px] h-[80px] border border-gray-300 flex items-center justify-center text-gray-400 text-xs mb-2">
@@ -189,17 +217,17 @@ export default function ChequeVoucherViewPage() {
               <p className="text-xs ml-2 mt-1">DATE</p>
             </div>
           </div>
-
           <div>
             <p className="font-semibold mb-4">Approved by:</p>
             <div className="flex flex-col items-center mb-4">
               {voucher.approved_by_signature_url ? (
                 <Image
-                  src={voucher.approved_by_signature_url || "/placeholder.svg"}
+                  src={getSignatureUrl(voucher.approved_by_signature_url) || "/placeholder.svg"}
                   alt="Approved By Signature"
                   width={150}
                   height={80}
                   className="border border-gray-300 mb-2"
+                  crossOrigin="anonymous"
                 />
               ) : (
                 <div className="w-[150px] h-[80px] border border-gray-300 flex items-center justify-center text-gray-400 text-xs mb-2">
