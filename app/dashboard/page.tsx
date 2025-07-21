@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -16,7 +15,6 @@ function DashboardContent() {
     { title: "Cheque Vouchers", value: "...", icon: CreditCard, color: "text-purple-600" },
     { title: "This Month", value: "...", icon: BarChart3, color: "text-orange-600" },
   ])
-
   const [recentActivities, setRecentActivities] = useState<ActivityLog[]>([])
   const [loading, setLoading] = useState(true)
   const [activitiesLoading, setActivitiesLoading] = useState(true)
@@ -25,6 +23,7 @@ function DashboardContent() {
   useEffect(() => {
     async function fetchVoucherCounts() {
       try {
+        // Fetch from Next.js API route, which proxies to Laravel
         const response = await fetch("/api/vouchers/counts")
         if (!response.ok) {
           const errorData = await response.json()
@@ -58,6 +57,7 @@ function DashboardContent() {
 
     async function fetchRecentActivities() {
       try {
+        // Fetch from Next.js API route, which proxies to Laravel
         const response = await fetch("/api/activity-logs/summary")
         if (!response.ok) {
           throw new Error("Failed to fetch recent activities")
@@ -86,36 +86,36 @@ function DashboardContent() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-6xl">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 max-w-6xl">
       <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* Stats - Already responsive with grid-cols */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
         {stats.map((stat) => (
           <Card key={stat.title}>
-            <CardContent className="flex flex-row items-center justify-between p-6">
+            <CardContent className="flex flex-row items-center justify-between p-4 sm:p-6">
               <div>
-                <p className="text-sm text-gray-600">{stat.title}</p>
-                <p className="text-2xl font-bold">{loading ? "..." : stat.value}</p>
+                <p className="text-sm sm:text-base text-gray-600">{stat.title}</p>
+                <p className="text-xl sm:text-2xl font-bold">{loading ? "..." : stat.value}</p>
               </div>
-              <stat.icon className={`w-8 h-8 ${stat.color}`} />
+              <stat.icon className={`w-6 h-6 sm:w-8 sm:h-8 ${stat.color}`} />
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - Already responsive with grid-cols */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {quickActions.map((action) => (
             <Link key={action.title} href={action.href}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardContent className="flex flex-row items-center gap-4 p-6">
+                <CardContent className="flex flex-row items-center gap-4 p-4 sm:p-6">
                   <div className={`p-3 rounded-lg ${action.color}`}>
-                    <action.icon className="w-6 h-6 text-white" />
+                    <action.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <span className="text-lg font-medium">{action.title}</span>
+                  <span className="text-base sm:text-lg font-medium">{action.title}</span>
                 </CardContent>
               </Card>
             </Link>
@@ -123,23 +123,23 @@ function DashboardContent() {
         </div>
       </div>
 
-      {/* Recent Activity */}
+      {/* Recent Activity - Enhanced responsiveness for header and items */}
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
+        <CardHeader className="px-4 sm:px-6 py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Activity className="w-5 h-5" />
               Recent Activity
             </CardTitle>
             <Link href="/activity-logs">
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="mt-2 sm:mt-0 bg-transparent">
                 View All
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6 py-4 sm:py-6">
           {activitiesLoading ? (
             <div className="space-y-4">
               {[...Array(3)].map((_, i) => (
@@ -166,7 +166,7 @@ function DashboardContent() {
   )
 }
 
-export default function Dashboard() {
+export default function DashboardPage() {
   return (
     <LoadingWrapper>
       <DashboardContent />

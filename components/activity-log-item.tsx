@@ -1,7 +1,7 @@
 import type { ActivityLog } from "@/types/activity-log"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Receipt, CreditCard, User, Calendar, FileText } from "lucide-react"
+import { Receipt, CreditCard, User, Calendar, FileText } from 'lucide-react'
 import { formatDistanceToNow } from "date-fns"
 
 interface ActivityLogItemProps {
@@ -47,20 +47,29 @@ export default function ActivityLogItem({ log, showDetails = false }: ActivityLo
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 mt-1">{getIcon()}</div>
-
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <p className="text-sm font-medium text-gray-900 truncate">{log.description}</p>
+            {" "}
+            {/* Added min-w-0 to allow shrinking */}
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              {" "}
+              {/* Added flex-wrap for badges */}
+              <p className="text-sm font-medium text-gray-900 break-words">{log.description}</p>{" "}
+              {/* Added break-words */}
               {log.event && (
-                <Badge variant="secondary" className={getEventColor(log.event)}>
+                <Badge variant="secondary" className={`max-w-full truncate ${getEventColor(log.event)}`}>
+                  {" "}
+                  {/* Added max-w-full truncate */}
                   {log.event}
                 </Badge>
               )}
             </div>
-
-            <div className="flex items-center gap-4 text-xs text-gray-500">
+            <div className="flex items-center gap-4 text-xs text-gray-500 flex-wrap">
+              {" "}
+              {/* Added flex-wrap for user/date info */}
               {log.causer && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 break-words">
+                  {" "}
+                  {/* Added break-words */}
                   <User className="w-3 h-3" />
                   <span className="font-medium text-blue-600">
                     {log.causer.name || log.causer.email || "Unknown User"}
@@ -68,24 +77,23 @@ export default function ActivityLogItem({ log, showDetails = false }: ActivityLo
                   {log.causer.role && <span className="text-gray-400">({log.causer.role})</span>}
                 </div>
               )}
-
               <div className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
                 <span>{formatTimeAgo(log.created_at)}</span>
               </div>
-
-              {log.subject && (
+              {log.subject && log.subject.voucher_no && (
                 <div className="flex items-center gap-1">
                   <span>#{log.subject.voucher_no}</span>
                 </div>
               )}
             </div>
-
             {showDetails && log.properties && Object.keys(log.properties).length > 0 && (
               <div className="mt-2 p-2 bg-gray-50 rounded text-xs">
                 <details>
                   <summary className="cursor-pointer text-gray-600 hover:text-gray-800">View Details</summary>
-                  <pre className="mt-1 text-gray-700 whitespace-pre-wrap">
+                  <pre className="mt-1 text-gray-700 whitespace-pre-wrap break-words">
+                    {" "}
+                    {/* Ensure break-words here */}
                     {JSON.stringify(log.properties, null, 2)}
                   </pre>
                 </details>
